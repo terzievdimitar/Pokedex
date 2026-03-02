@@ -51,6 +51,6 @@ jobs:
           docker pull ${{secrets.DOCKER_USERNAME}}/pokedex:latest
 
           # Run container
-          docker run -d --name pokedex -p 2103:2103 --restart unless-stopped --env-file .env ${{secrets.DOCKER_USERNAME}}/pokedex:latest
+          docker run -d --name pokedex -p 2103:2103 --restart unless-stopped ${{secrets.DOCKER_USERNAME}}/pokedex:latest
           
         
