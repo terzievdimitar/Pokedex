@@ -3,13 +3,18 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - '.github/**'
+      - '*.md'
+
+  workflow_dispatch:
 
 jobs:
 
-  build:
-
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,14 +34,13 @@ jobs:
         push: true
         tags: ${{secrets.DOCKER_USERNAME}}/pokedex:latest
 
-    - name: Deploy to server via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{secrets.SERVER_HOST}}
-        username: ${{secrets.SERVER_USERNAME}}
-        key: ${{secrets.SERVER_SSH_PRIVATE_KEY}}
-        script: |
+  deploy-locally:
+    needs: build-and-push
+    runs-on: self-hosted
 
+    steps:
+    - name: Deploy to server 
+      run: |
           # Stop container if it works
           docker stop pokedex || true
 
